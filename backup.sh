@@ -47,17 +47,33 @@ function backup
 
   if [ -d "$path" ]
   then
-    echo "We will do a backup of the directory $path"
+    echo -e "\nWe will do a backup of the directory $path"
     read -p "Do yo want to proceed(y/n)? >> " option
     if [ $option = "y" -o $option = "Y" -o $option = "yes" -o $option = "Yes" -o $option = "YES" ]
     then
-      echo
-    elif [ $option = "n" -o $option = "N" -o $option = "No" -o $option = "NO" ]
+      if [ ! -d "/backups" ]
+      then
+         sudo mkdir /backups #This will raise an error if we don't have permissions
+         sudo chmod 766 /backups
+      fi
+      file=$(basename "$path")
+      if [ -f /backups/$file*.tar.gz ]
+      then
+        find /backups -name "$file*.tar.gz" -delete
+      fi
+      name="$file$(date +%Y%m%d-%H%M)"
+      tar -czf "/backups/$name.tar.gz" "$path"
+      echo -e "\nThe file $path has been backed up"
+      echo -e "Taking you to the main menu"
+      sleep 3
+      clear
+      main
+    elif [ $option = "n" -o $option = "N" -o $option = "No" -o $option = "NO" -o $option = "no" ]
     then
       clear
       main
     else
-      echo "Invalid option, you'll be redirected to the main menu"
+      echo "ERROR -- Invalid option, you'll be redirected to the main menu"
       sleep 2
       main
     fi
@@ -65,7 +81,7 @@ function backup
     echo "The specified path doesn't exit"
     sleep 2
     clear
-    main
+    backup
   fi
 }
 
@@ -78,7 +94,17 @@ function cronBackup
 function restoreBackup
 {
   clear
-  echo restore
+  echo -e "Restore backups tool\n"
+  echo "List of existing backups: "
+  ls /backups
+  read -p "Which one do you want to recover >> " answer
+  if [ ! -f "$answer" ]
+  then
+    echo "Introduce a valid option"
+    sleep 2
+    clear
+    restoreBackup
+  fi
 }
 
 function main
@@ -102,4 +128,6 @@ function main
 }
 
 header
+echo "$(pwd)"
 main
+exit 0

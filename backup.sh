@@ -96,14 +96,21 @@ function restoreBackup
   clear
   echo -e "Restore backups tool\n"
   echo "List of existing backups: "
-  ls /backups
+  for file in $(ls /backups)
+  do
+    echo -e "\t+ $file"
+  done
+  echo " "
   read -p "Which one do you want to recover >> " answer
-  if [ ! -f "$answer" ]
+  if [ -f "/backups/$answer" ]
   then
-    echo "Introduce a valid option"
+    echo -e "\nRestoring $answer ..."
+    tar -xf "/backups/$answer"
+  else
+    echo "There is no such file, taking you to the main menu"
     sleep 2
     clear
-    restoreBackup
+    main
   fi
 }
 

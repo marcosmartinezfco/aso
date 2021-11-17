@@ -41,7 +41,7 @@ function backup() {
   echo -e "Backup tool\n"
   read -p "Path of the directory >> " path
 
-  if [ -d "$path" ]; then
+  if [ -d "$path" -o -f "$path" ]; then
     echo -e "\nWe will do a backup of the directory $path"
     read -p "Do yo want to proceed(y/n)? >> " option
     if [ $option = "y" -o $option = "Y" -o $option = "yes" -o $option = "Yes" -o $option = "YES" ]; then
@@ -50,8 +50,7 @@ function backup() {
         chmod 766 $workdir
       fi
       file=$(basename "$path")
-      for x in $workdir/$file*.tar.gz
-      do
+      for x in $workdir/$file*.tar.gz; do
         rm $x
       done
       name="$(basename "$path")-$(date +%Y%m%d-%H%M)"
@@ -79,14 +78,38 @@ function backup() {
 
 function cronBackup() {
   clear
-  echo cron
+  echo -e "Program backups tool\n"
+  read -p "Absolute path to the file >> " path
+  if [ -d "$path" -o -f "$path" ]; then
+    read -p "Hour of the backup (0:00 - 23:59) >> " time
+    hour=$(echo $time | cut -d : -f 1)
+    min=$(echo $time | cut -d : -f 2)
+    if [ $hour -le 23 -a $hour -ge 0 -a $min -le 59 -a $min -ge 00 ]; then
+      crontab -l >/tmp/crontab
+      tarea="$hour $min * * 1-7 tar -czf $workdir/$name.tar.gz $path"
+      echo $tarea >>/tmp/crontab
+      crontab /tmp/crontab
+      main
+    else
+      echo -e "\nERROR -- Invalid hour format, you'll be redirected to the main menu"
+      sleep 2
+      clear
+      main
+    fi
+  else
+    echo -e "\nERROR -- Invalid path, you'll be redirected to the main menu"
+    sleep 2
+    clear
+    main
+  fi
+
 }
 
 function restoreBackup() {
   clear
   echo -e "Restore backups tool\n"
   echo "List of existing backups: "
-  for file in $workdir/* ; do
+  for file in $workdir/*; do
     echo -e "\t+ $(basename "$file")"
   done
   echo " "

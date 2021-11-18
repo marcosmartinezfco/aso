@@ -18,6 +18,12 @@ function header() {
   spacer
 }
 
+function redicrect() {
+  sleep 2
+  clear
+  main
+}
+
 function menu() {
   echo Menu
   echo -e "\t1) Perform a backup"
@@ -43,7 +49,7 @@ function backup() {
 
   if [ -d "$path" -o -f "$path" ]; then
     echo -e "\nWe will do a backup of the directory $path"
-    read -p "Do yo want to proceed(y/n)? >> " option
+    read -p "Do yo want to proceed (y/n)? >> " option
     if [ $option = "y" -o $option = "Y" -o $option = "yes" -o $option = "Yes" -o $option = "YES" ]; then
       if [ ! -d $workdir ]; then
         mkdir $workdir
@@ -57,16 +63,13 @@ function backup() {
       tar -czf "$workdir/$name.tar.gz" "$path"
       echo -e "\nThe file $path has been backed up"
       echo -e "Taking you to the main menu"
-      sleep 2
-      clear
-      main
+      redirect
     elif [ $option = "n" -o $option = "N" -o $option = "No" -o $option = "NO" -o $option = "no" ]; then
       clear
       main
     else
       echo "ERROR -- Invalid option, you'll be redirected to the main menu"
-      sleep 2
-      main
+      redicrect
     fi
   else
     echo "The specified path doesn't exit"
@@ -82,19 +85,22 @@ function cronBackup() {
   read -p "Absolute path to the file >> " path
   if [ -d "$path" -o -f "$path" ]; then
     read -p "Hour of the backup (0:00 - 23:59) >> " time
-    hour=$(echo $time | cut -d : -f 1)
-    min=$(echo $time | cut -d : -f 2)
-    if [ $hour -le 23 -a $hour -ge 0 -a $min -le 59 -a $min -ge 00 ]; then
-      crontab -l >/tmp/crontab
-      tarea="$hour $min * * 1-7 tar -czf $workdir/$name.tar.gz $path"
-      echo $tarea >>/tmp/crontab
-      crontab /tmp/crontab
-      main
+    read -o "The backup will execute at $time. Do you agree? (y/n) >> "
+    if [ $option = "y" -o $option = "Y" -o $option = "yes" -o $option = "Yes" -o $option = "YES" ]; then
+      hour=$(echo $time | cut -d : -f 1)
+      min=$(echo $time | cut -d : -f 2)
+      if [ $hour -le 23 -a $hour -ge 0 -a $min -le 59 -a $min -ge 00 ]; then
+        crontab -l >/tmp/crontabaso
+        echo "$min $hour * * 1-7 tar -czf $workdir/$(basename "$path")-$(date +%Y%m%d-%H%M).tar.gz $path" >>/tmp/crontabaso
+        crontab /tmp/crontabaso
+        redirect
+      else
+        echo -e "\nERROR -- Invalid hour format, you'll be redirected to the main menu"
+        redirect
+      fi
     else
-      echo -e "\nERROR -- Invalid hour format, you'll be redirected to the main menu"
-      sleep 2
-      clear
-      main
+      echo -e "\nOkay, you'll be redirected to the main menu"
+      redirect
     fi
   else
     echo -e "\nERROR -- Invalid path, you'll be redirected to the main menu"
@@ -119,9 +125,7 @@ function restoreBackup() {
     tar -xf "$workdir/$answer"
   else
     echo "There is no such file, taking you to the main menu"
-    sleep 2
-    clear
-    main
+    redirect
   fi
 }
 

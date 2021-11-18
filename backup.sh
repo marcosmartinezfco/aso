@@ -18,11 +18,6 @@ function header() {
   spacer
 }
 
-function redicrect() {
-  sleep 2
-  clear
-  main
-}
 
 function menu() {
   echo Menu
@@ -51,31 +46,27 @@ function backup() {
     echo -e "\nWe will do a backup of the directory $path"
     read -p "Do yo want to proceed (y/n)? >> " option
     if [ $option = "y" -o $option = "Y" -o $option = "yes" -o $option = "Yes" -o $option = "YES" ]; then
-      if [ ! -d $workdir ]; then
-        mkdir $workdir
-        chmod 766 $workdir
-      fi
-      file=$(basename "$path")
-      for x in $workdir/$file*.tar.gz; do
-        rm $x
-      done
       name="$(basename "$path")-$(date +%Y%m%d-%H%M)"
       tar -czf "$workdir/$name.tar.gz" "$path"
       echo -e "\nThe file $path has been backed up"
       echo -e "Taking you to the main menu"
-      redirect
+      sleep 2
+      clear
+      main
     elif [ $option = "n" -o $option = "N" -o $option = "No" -o $option = "NO" -o $option = "no" ]; then
       clear
       main
     else
-      echo "ERROR -- Invalid option, you'll be redirected to the main menu"
-      redicrect
+      echo "Invalid option, you'll be redirected to the main menu"
+      sleep 2
+      clear
+      main
     fi
   else
-    echo "The specified path doesn't exit"
+    echo "The specified path doesn't exit, taking you to the main menu"
     sleep 2
     clear
-    backup
+    main
   fi
 }
 
@@ -93,43 +84,54 @@ function cronBackup() {
         crontab -l >/tmp/crontabaso
         echo "$min $hour * * 1-7 tar -czf $workdir/$(basename "$path")-$(date +%Y%m%d-%H%M).tar.gz $path" >>/tmp/crontabaso
         crontab /tmp/crontabaso
-        redirect
+        sleep 2
+        clear
+        main
       else
-        echo -e "\nERROR -- Invalid hour format, you'll be redirected to the main menu"
-        redirect
+        echo -e "\nInvalid hour format, you'll be redirected to the main menu"
+        sleep 2
+        clear
+        main
       fi
     else
       echo -e "\nOkay, you'll be redirected to the main menu"
-      redirect
+      sleep 2
+      clear
+      main
     fi
   else
-    echo -e "\nERROR -- Invalid path, you'll be redirected to the main menu"
+    echo -e "\nInvalid path, you'll be redirected to the main menu"
     sleep 2
     clear
     main
   fi
-
 }
 
 function restoreBackup() {
   clear
   echo -e "Restore backups tool\n"
   echo "List of existing backups: "
-  for file in $workdir/*; do
+  for file in $workdir/*.tar.gz; do
     echo -e "\t+ $(basename "$file")"
   done
   echo " "
   read -p "Which one do you want to recover >> " answer
   if [ -f "$workdir/$answer" ]; then
-    echo -e "\nRestoring $answer ..."
+    echo "Restoring $answer ..."
     tar -xf "$workdir/$answer"
   else
     echo "There is no such file, taking you to the main menu"
-    redirect
   fi
+  sleep 2
+  clear
+  main
 }
 
 function main() {
+  if [ ! -d $workdir ]; then
+    mkdir $workdir
+    chmod 766 $workdir
+  fi
   menu
   case "$?" in
   1)
@@ -144,6 +146,10 @@ function main() {
   4)
     echo -e "\nBye, Bye"
     exit 0
+    ;;
+  *)
+    clear
+    main
     ;;
   esac
 }

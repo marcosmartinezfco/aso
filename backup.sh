@@ -33,7 +33,11 @@ function menu() {
     while [ $option -lt 1 -o $option -gt 4 ]; do
       read -p "Please introduce a valid option [1-4] >> " option
     done
-    return $option
+    if [ $option -lt 1 -o $option -gt 4 ]; then
+        return $option
+    else
+      return 5
+    fi
   fi
 }
 
@@ -149,6 +153,7 @@ function main() {
     ;;
   *)
     clear
+    header
     main
     ;;
   esac

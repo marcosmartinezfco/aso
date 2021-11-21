@@ -81,7 +81,7 @@ function cronBackup() {
       min=$(echo "$time" | cut -d : -f 2)
       if [ $hour -le 23 -a $hour -ge 0 -a $min -le 59 -a $min -ge 00 ]; then
         crontab -l > /tmp/crontabaso
-        echo "$min $hour * * 1-7 tar -czf $workdir/$(basename "$path")-$(date +%Y%m%d-%H%M).tar.gz $path" >> /tmp/crontabaso
+        echo "$min $hour * * 1-7 $workdir/cron-backup.sh $path" >> /tmp/crontabaso
         crontab /tmp/crontabaso
         echo "Task added to crontab file, taking you to the main menu"
         echo -e "$(date +%Y%m%d-%H%M)\tINFO\tTask added to crontab file" >> "$workdir/backup.log"

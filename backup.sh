@@ -116,7 +116,9 @@ function restoreBackup() {
   echo -e "Restore backups tool\n"
   echo "List of existing backups: "
   for file in $workdir/*.tar.gz; do
-    echo -e "\t+ $(basename "$file")"
+    if [ $file != "$workdir/*.tar.gz"  ]; then
+        echo -e "\t+ $(basename "$file")"
+    fi
   done
   echo " "
   read -p "Which one do you want to recover >> " answer

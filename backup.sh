@@ -80,13 +80,13 @@ function cronBackup() {
   read -p "Absolute path to the file >> " path
   if [ -d "$path" -o -f "$path" ]; then
     read -p "Hour of the backup (0:00 - 23:59) >> " time
-    read -o "The backup will execute at $time. Do you agree? (y/n) >> "
+    read -p "The backup will execute at $time. Do you agree? (y/n) >> " option
     if [ $option = "y" -o $option = "Y" -o $option = "yes" -o $option = "Yes" -o $option = "YES" ]; then
-      hour=$(echo $time | cut -d : -f 1)
-      min=$(echo $time | cut -d : -f 2)
+      hour=$(echo "$time" | cut -d : -f 1)
+      min=$(echo "$time" | cut -d : -f 2)
       if [ $hour -le 23 -a $hour -ge 0 -a $min -le 59 -a $min -ge 00 ]; then
-        crontab -l >/tmp/crontabaso
-        echo "$min $hour * * 1-7 tar -czf $workdir/$(basename "$path")-$(date +%Y%m%d-%H%M).tar.gz $path" >>/tmp/crontabaso
+        crontab -l > /tmp/crontabaso
+        echo "$min $hour * * 1-7 tar -czf $workdir/$(basename "$path")-$(date +%Y%m%d-%H%M).tar.gz $path" >> /tmp/crontabaso
         crontab /tmp/crontabaso
         sleep 2
         clear

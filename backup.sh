@@ -35,7 +35,7 @@ function menu() {
     if [ $option -lt 1 -o $option -gt 4 ]; then
         return $option
     else
-      return 5 #This way the default option in main will be executed
+      return 5 #This way the default option in main will be executed in case of an invalid option
     fi
   fi
 }
@@ -104,7 +104,7 @@ function cronBackup() {
 function restoreBackup() {
   clear
   echo -e "Restore backups tool\n"
-  echo "List of existing backups: "
+  echo -e "List of existing backups:\n"
   for file in $workdir/*.tar.gz; do
     if [ $file != "$workdir/*.tar.gz"  ]; then
         echo -e "\t+ $(basename "$file")"

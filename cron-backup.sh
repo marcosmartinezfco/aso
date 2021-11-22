@@ -3,8 +3,8 @@
 workdir="/home/$(whoami)/backups"
 
 function main() {
-    if [ ! -f "$(pwd)/backup.sh" ]; then
-        echo -e "$(date +%Y%m%d-%H%M)\tERROR\tRuntime error, cron-backup.sh must be located in the same directory as backup.sh" >> "$workdir/backup.log"
+    if [ "$(pwd)" != "$workdir" ]; then
+        echo -e "$(date +%Y%m%d-%H%M)\tERROR\tRuntime error, cron-backup.sh must be located in the $workdir directory" >> "$workdir/backup.log"
         exit 1
     else
       name="$workdir/$(basename "$1")-$(date +%Y%m%d-%H%M).tar.gz"

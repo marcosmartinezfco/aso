@@ -73,7 +73,7 @@ function cronBackup() {
   clear
   echo -e "Program backups tool\n"
   read -p "Absolute path to the directory >> " path
-  if [ -d "$path" ]; then
+  if [ -d "$path" -a $(echo "$path" | cut -c 1) == "/" ]; then
     read -p "Hour of the backup (0:00 - 23:59) >> " time
     read -p "The backup will execute at $time. Do you agree? (y/n) >> " option
     if [ $option = "y" -o $option = "Y" -o $option = "yes" -o $option = "Yes" -o $option = "YES" ]; then

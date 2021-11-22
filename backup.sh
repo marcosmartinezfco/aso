@@ -75,22 +75,27 @@ function cronBackup() {
   read -p "Absolute path to the directory >> " path
   if [ -d "$path" -a $(echo "$path" | cut -c 1) == "/" ]; then
     read -p "Hour of the backup (0:00 - 23:59) >> " time
-    read -p "The backup will execute at $time. Do you agree? (y/n) >> " option
-    if [ $option = "y" -o $option = "Y" -o $option = "yes" -o $option = "Yes" -o $option = "YES" ]; then
-      hour=$(echo "$time" | cut -d : -f 1)
-      min=$(echo "$time" | cut -d : -f 2)
-      if [ $hour -le 23 -a $hour -ge 0 -a $min -le 59 -a $min -ge 00 ]; then
-        crontab -l > /tmp/crontabaso
-        echo "$min $hour * * 1-7 $workdir/cron-backup.sh $path" >> /tmp/crontabaso
-        crontab /tmp/crontabaso
-        echo "Task added to crontab file, taking you to the main menu"
-        echo -e "$(date +%Y%m%d-%H%M)\tINFO\tTask added to crontab file" >> "$workdir/backup.log"
+    if [[ "$time" =~ ^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$ ]]; then
+      read -p "The backup will execute at $time. Do you agree? (y/n) >> " option
+      if [ $option = "y" -o $option = "Y" -o $option = "yes" -o $option = "Yes" -o $option = "YES" ]; then
+        hour=$(echo "$time" | cut -d : -f 1)
+        min=$(echo "$time" | cut -d : -f 2)
+        if [ $hour -le 23 -a $hour -ge 0 -a $min -le 59 -a $min -ge 00 ]; then
+          crontab -l > /tmp/crontabaso
+          echo "$min $hour * * 1-7 $workdir/cron-backup.sh $path" >> /tmp/crontabaso
+          crontab /tmp/crontabaso
+          echo "Task added to crontab file, taking you to the main menu"
+          echo -e "$(date +%Y%m%d-%H%M)\tINFO\tTask added to crontab file" >> "$workdir/backup.log"
+        else
+          echo "Invalid hour format, you'll be redirected to the main menu"
+          echo -e "$(date +%Y%m%d-%H%M)\tERROR\tInvalid hour format specified in the cron backup tool" >> "$workdir/backup.log"
+        fi
       else
-        echo "Invalid hour format, you'll be redirected to the main menu"
-        echo -e "$(date +%Y%m%d-%H%M)\tERROR\tInvalid hour format specified in the cron backup tool" >> "$workdir/backup.log"
+        echo -e "\nOkay, you'll be redirected to the main menu"
       fi
     else
-      echo -e "\nOkay, you'll be redirected to the main menu"
+      echo -e "\nInvalid hour format, you'll be redirected to the main menu"
+      echo -e "$(date +%Y%m%d-%H%M)\tERROR\tInvalid hour format in the cron backup tool" >> "$workdir/backup.log"
     fi
   else
     echo -e "\nInvalid path, you'll be redirected to the main menu"

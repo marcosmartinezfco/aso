@@ -24,19 +24,12 @@ function menu() {
   echo -e "\t2) Program a backup with cron "
   echo -e "\t3) Restore the content of a backup "
   echo -e "\t4) Exit\n"
-
   read -p "Option >> " option
+  
   if [ $option -le 4 -a $option -ge 1 ]; then
     return $option
   else
-    while [ $option -lt 1 -o $option -gt 4 ]; do
-      read -p "Please introduce a valid option [1-4] >> " option
-    done
-    if [ $option -lt 1 -o $option -gt 4 ]; then
-        return $option
-    else
-      return 5 #This way the default option in main will be executed in case of an invalid option
-    fi
+    return -1 #This way the default option in main will be executed in case of an invalid option
   fi
 }
 
@@ -151,6 +144,8 @@ function main() {
     exit 0
     ;;
   *)
+    echo "Please introduce a valid option [1-4]"
+    sleep 1
     clear
     header
     main

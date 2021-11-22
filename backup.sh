@@ -48,13 +48,13 @@ function backup() {
       echo -e "$(date +%Y%m%d-%H%M)\tINFO\tThe directory $path has been backed up" >> "$workdir/backup.log"
       echo -e "Taking you to the main menu"
     elif [ $option = "n" -o $option = "N" -o $option = "No" -o $option = "NO" -o $option = "no" ]; then
-      echo "Okay, you'll be redirected to the main menu"
+      echo -e "\nOkay, you'll be redirected to the main menu"
     else
-      echo "Invalid option, you'll be redirected to the main menu"
+      echo -e "\nInvalid option, you'll be redirected to the main menu"
       echo -e "$(date +%Y%m%d-%H%M)\tERROR\tInvalid option in the backup tool menu" >> "$workdir/backup.log"
     fi
   else
-    echo "The specified path doesn't exit, taking you to the main menu"
+    echo -e "\nThe specified path doesn't exit, taking you to the main menu"
     echo -e "$(date +%Y%m%d-%H%M)\tERROR\tInvalid path specified in the backup tool menu" >> "$workdir/backup.log"
   fi
   sleep 2

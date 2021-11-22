@@ -3,7 +3,7 @@
 workdir="/home/$(whoami)/backups"
 
 function main() {
-    if [ "$(pwd)" != "$workdir" ]; then
+    if [ "$(dirname "$0")" != "$workdir" ]; then
         echo -e "$(date +%Y%m%d-%H%M)\tERROR\tRuntime error, cron-backup.sh must be located in the $workdir directory" >> "$workdir/backup.log"
         exit 1
     else

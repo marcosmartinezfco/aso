@@ -29,7 +29,7 @@ function menu() {
   if [ $option -le 4 -a $option -ge 1 ]; then
     return $option
   else
-    return -1 #This way the default option in main will be executed in case of an invalid option
+    return 5 #This way the default option in main will be executed in case of an invalid option
   fi
 }
 
@@ -66,7 +66,7 @@ function cronBackup() {
   clear
   echo -e "Program backups tool\n"
   read -p "Absolute path to the directory >> " path
-  if [ -d "$path" -a $(echo "$path" | cut -c 1) == "/" ]; then
+  if [ -d "$path" -a "$(echo "$path" | cut -c 1)" == "/" ]; then
     read -p "Hour of the backup (0:00 - 23:59) >> " time
     if [[ "$time" =~ ^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$ ]]; then
       read -p "The backup will execute at $time. Do you agree? (y/n) >> " option
@@ -144,8 +144,6 @@ function main() {
     exit 0
     ;;
   *)
-    echo "Please introduce a valid option [1-4]"
-    sleep 1
     clear
     header
     main

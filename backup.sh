@@ -73,16 +73,11 @@ function cronBackup() {
       if [ $option = "y" -o $option = "Y" -o $option = "yes" -o $option = "Yes" -o $option = "YES" ]; then
         hour=$(echo "$time" | cut -d : -f 1)
         min=$(echo "$time" | cut -d : -f 2)
-        if [ $hour -le 23 -a $hour -ge 0 -a $min -le 59 -a $min -ge 00 ]; then
-          crontab -l > /tmp/crontabaso
-          echo "$min $hour * * 1-7 $workdir/cron-backup.sh $path" >> /tmp/crontabaso
-          crontab /tmp/crontabaso
-          echo "Task added to crontab file, taking you to the main menu"
-          echo -e "$(date +%Y%m%d-%H%M)\tINFO\tTask added to crontab file" >> "$workdir/backup.log"
-        else
-          echo "Invalid hour format, you'll be redirected to the main menu"
-          echo -e "$(date +%Y%m%d-%H%M)\tERROR\tInvalid hour format specified in the cron backup tool" >> "$workdir/backup.log"
-        fi
+        crontab -l > /tmp/crontabaso
+        echo "$min $hour * * 1-7 $workdir/cron-backup.sh $path" >> /tmp/crontabaso
+        crontab /tmp/crontabaso
+        echo "Task added to crontab file, taking you to the main menu"
+        echo -e "$(date +%Y%m%d-%H%M)\tINFO\tTask added to crontab file" >> "$workdir/backup.log"
       else
         echo -e "\nOkay, you'll be redirected to the main menu"
       fi

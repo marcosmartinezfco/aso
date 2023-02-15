@@ -1,4 +1,5 @@
 #!/bin/bash
+
 #made for aso
 
 filedir="$(pwd)"
